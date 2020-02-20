@@ -1,0 +1,53 @@
+<html>
+  <head>
+    <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
+  </head>
+  <body>
+    <a-scene>
+      <a-assets>
+        <img id="texture" src="/images/example.png" />
+      </a-assets>
+      <a-sphere id="sphere" scale="1 1 1" position="0 1.5 -0.5" material="shader:simpleFragment;"></a-sphere>
+    </a-scene>
+  </body>
+  <script>
+    AFRAME.registerShader('simpleFragment', 
+    {
+      init: function (data) {
+        var sphere = this.el.object3D;
+        var texture = new THREE.TextureLoader().load( "images/example.png", function ( tex ) {
+        } );
+        texture.minFilter = THREE.LinearFilter
+        this.material = new THREE.ShaderMaterial({
+          uniforms: {
+            texture: {
+              type: 't',
+              value: texture,
+            }
+          },
+          vertexShader : this.vertexShader,
+          fragmentShader: this.fragmentShader
+        })
+      },
+      vertexShader: [
+        'varying vec2 vUv;',
+        'void main(void)',
+        '{',
+        'vUv = uv;',
+        'vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );',
+        'gl_Position = projectionMatrix * mvPosition;',
+        '}'
+      ].join('\n'),
+      fragmentShader: [
+        'varying vec2 vUv;',
+        'uniform sampler2D texture;',
+        'void main(void)',
+        '{',
+        '//gl_FragColor = vec4(1.0,0.0,1.0,1.0);',
+        'gl_FragColor = texture2D( texture, vUv );',
+        '}'
+      ].join('\n')
+    })
+  </script>
+  </script>
+</html>
